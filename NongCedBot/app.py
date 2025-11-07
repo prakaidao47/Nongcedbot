@@ -171,11 +171,15 @@ import streamlit as st
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
 
+# กันไฟล์หาย + รองรับ Streamlit Cloud
 if LOGO_PATH.exists():
-    st.image(str(LOGO_PATH), caption="Department of Computer Education | KMUTNB",
+    img = Image.open(LOGO_PATH)          # วิธีที่เสถียรสุด
+    st.image(img,
+             caption="Department of Computer Education | KMUTNB",
              use_container_width=True)
 else:
-    st.warning(f"Logo not found: {LOGO_PATH.name}")
+    st.warning(f"Logo not found: {LOGO_PATH}")
+
 
 
 # -------------------- Show Chat (safe text) --------------------
