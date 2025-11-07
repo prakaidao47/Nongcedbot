@@ -18,7 +18,7 @@ st.set_page_config(
 
 # -------------------- LOAD LOGO --------------------
 # ใช้พาธจริงของคุณ
-LOGO_PATH = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/assets/ced-logo.jpg"
+LOGO_PATH = "NongCedBot/NongCedBot/assets/ced-logo.jpg"
 
 def _img_as_base64(path: str) -> str:
     try:
@@ -158,7 +158,7 @@ if "messages" not in st.session_state or not st.session_state["messages"]:
     }]
 
 # -------------------- Load Data --------------------
-file_path = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/NongCedBotFull.xlsx"
+file_path = "NongCedBot/NongCedBot/NongCedBotFull.xlsx"
 try:
     all_sheets = pd.read_excel(file_path, sheet_name=None, engine="openpyxl")
     frames = []
