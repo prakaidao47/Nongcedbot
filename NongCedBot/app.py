@@ -18,9 +18,14 @@ st.set_page_config(
 
 # -------------------- LOAD LOGO --------------------
 # ใช้พาธจริงของคุณ
-LOGO_PATH = "NongCedBot/NongCedBot/assets/ced-logo.jpg"
+# ---------------- LOAD LOGO ----------------
+from pathlib import Path
+import base64
 
-def _img_as_base64(path: str) -> str:
+BASE_DIR = Path(__file__).resolve().parent        # โฟลเดอร์เดียวกับ app.py
+LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"  # NongCedBot/assets/ced-logo.jpg
+
+def _img_as_base64(path: Path) -> str:
     try:
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
@@ -28,6 +33,7 @@ def _img_as_base64(path: str) -> str:
         return ""
 
 base64_logo = _img_as_base64(LOGO_PATH)
+
 
 # -------------------- CSS THEME --------------------
 st.markdown("""
