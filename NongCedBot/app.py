@@ -145,23 +145,25 @@ model = genai.GenerativeModel(
 )
 
 # -------------------- Sidebar --------------------
+from PIL import Image
+
 with st.sidebar:
     if base64_logo:
-        st.image(LOGO_PATH, caption="Department of Computer Education | KMUTNB", use_container_width=True)
+        img = Image.open(LOGO_PATH)  # เปิดรูปจากไฟล์
+        try:
+            st.image(img, caption="Department of Computer Education | KMUTNB",
+                     use_container_width=True)
+        except TypeError:
+            st.image(img, caption="Department of Computer Education | KMUTNB",
+                     use_column_width=True)
+
     st.markdown("### ⚙️ การตั้งค่า")
-    if st.button("🧹 ล้างประวัติการสนทนา", use_container_width=True):
+    if st.button("🧹 ล้างประวัติการสนทนา", use_column_width=True):
         st.session_state["messages"] = [{
             "role": "model",
             "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
         }]
         st.rerun()
-
-# -------------------- Init Messages --------------------
-if "messages" not in st.session_state or not st.session_state["messages"]:
-    st.session_state["messages"] = [{
-        "role": "model",
-        "content": "NongCedBot สวัสดีค่ะ 😊 ฉันตอบคำถามเกี่ยวกับหลักสูตรภาควิชาคอมพิวเตอร์ศึกษา (KMUTNB) จากไฟล์ข้อมูลที่คุณอัปโหลด ลองพิมพ์เช่น “รายวิชาปี 1 เทอม 1” หรือ “วิชา OS กี่หน่วยกิต” ได้เลยค่ะ"
-    }]
 
 # -------- Load Data (robust path) --------
 from pathlib import Path
