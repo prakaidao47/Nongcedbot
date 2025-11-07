@@ -158,7 +158,17 @@ if "messages" not in st.session_state or not st.session_state["messages"]:
     }]
 
 # -------------------- Load Data --------------------
-file_path = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/NongCedBotFull.xlsx"
+from pathlib import Path
+import pandas as pd
+import streamlit as st
+
+# --- ใช้ Path เพื่อสร้างพาธแบบอัตโนมัติ ---
+BASE_DIR = Path(__file__).resolve().parent       # โฟลเดอร์เดียวกับ app.py
+file_path = BASE_DIR / "NongCedBotFull.xlsx"     # ถ้าไฟล์อยู่ข้าง app.py
+
+# ถ้าไฟล์อยู่ในโฟลเดอร์ย่อย (เช่น assets)
+# file_path = BASE_DIR / "assets" / "NongCedBotFull.xlsx"
+
 try:
     all_sheets = pd.read_excel(file_path, sheet_name=None, engine="openpyxl")
     frames = []
@@ -167,11 +177,13 @@ try:
         if not dfx.empty:
             dfx["sheet"] = name
             frames.append(dfx)
+
     df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
     file_content = df.to_csv(index=False)
 except Exception as e:
     st.error(f"อ่านไฟล์ข้อมูลไม่สำเร็จ: {e}")
     st.stop()
+
 
 # -------------------- Show Chat (safe text) --------------------
 st.markdown('<div class="chat-wrap">', unsafe_allow_html=True)
