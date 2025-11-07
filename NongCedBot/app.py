@@ -110,7 +110,7 @@ st.markdown(
     f"""
     <div class="header">
         {'<img src="data:image/jpeg;base64,' + base64_logo + '" alt="logo">' if base64_logo else ''}
-        <h1>NongCedBot</h1>
+      
     </div>
     """,
     unsafe_allow_html=True
