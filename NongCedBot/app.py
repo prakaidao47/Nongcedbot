@@ -147,9 +147,10 @@ model = genai.GenerativeModel(
 # -------------------- Sidebar --------------------
 from PIL import Image
 
+# -------------------- Sidebar --------------------
 with st.sidebar:
-    if base64_logo:
-        img = Image.open(LOGO_PATH)  # เปิดรูปจากไฟล์
+    if LOGO_PATH.exists():
+        img = Image.open(LOGO_PATH)
         try:
             st.image(img, caption="Department of Computer Education | KMUTNB",
                      use_container_width=True)
@@ -158,12 +159,21 @@ with st.sidebar:
                      use_column_width=True)
 
     st.markdown("### ⚙️ การตั้งค่า")
-    if st.button("🧹 ล้างประวัติการสนทนา", use_column_width=True):
+
+    # ทำให้ปุ่มใน Sidebar กว้างเต็ม (ทางเลือก)
+    st.markdown("""
+        <style>
+        [data-testid="stSidebar"] div.stButton > button { width: 100%; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    if st.button("🧹 ล้างประวัติการสนทนา"):
         st.session_state["messages"] = [{
             "role": "model",
             "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
         }]
         st.rerun()
+
 
 # -------- Load Data (robust path) --------
 from pathlib import Path
