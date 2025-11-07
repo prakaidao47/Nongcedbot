@@ -18,14 +18,9 @@ st.set_page_config(
 
 # -------------------- LOAD LOGO --------------------
 # ใช้พาธจริงของคุณ
-# ---------------- LOAD LOGO ----------------
-from pathlib import Path
-import base64
+LOGO_PATH = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/assets/ced-logo.jpg"
 
-BASE_DIR = Path(__file__).resolve().parent        # โฟลเดอร์เดียวกับ app.py
-LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"  # NongCedBot/assets/ced-logo.jpg
-
-def _img_as_base64(path: Path) -> str:
+def _img_as_base64(path: str) -> str:
     try:
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
@@ -33,7 +28,6 @@ def _img_as_base64(path: Path) -> str:
         return ""
 
 base64_logo = _img_as_base64(LOGO_PATH)
-
 
 # -------------------- CSS THEME --------------------
 st.markdown("""
@@ -144,103 +138,40 @@ model = genai.GenerativeModel(
     system_instruction=PROMPT_WORKAW
 )
 
-# =====================================================
-# 💬 NongCedBot | CED KMUTNB
-# =====================================================
-
-from pathlib import Path
-from PIL import Image
-import streamlit as st
-
-# -------------------- CONFIG --------------------
-st.set_page_config(
-    page_title="NongCedBot | CED KMUTNB",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-)
-
-# -------------------- PATH & LOGO --------------------
-BASE_DIR = Path(__file__).resolve().parent
-LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
-
-# -------------------- Session init --------------------
-def initial_messages():
-    return [{
-        "role": "model",
-        "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
-    }]
-
-if "messages" not in st.session_state or not isinstance(st.session_state["messages"], list):
-    st.session_state["messages"] = initial_messages()
-
 # -------------------- Sidebar --------------------
 with st.sidebar:
-    # โลโก้ (ถ้ามี)
-    if LOGO_PATH.exists():
-        img = Image.open(LOGO_PATH)
-        try:
-            st.image(img, caption="Department of Computer Education | KMUTNB",
-                     use_container_width=True)
-        except TypeError:
-            st.image(img, caption="Department of Computer Education | KMUTNB",
-                     use_column_width=True)
-    else:
-        st.warning("Logo not found.")
-
+    if base64_logo:
+        st.image(LOGO_PATH, caption="Department of Computer Education | KMUTNB", use_container_width=True)
     st.markdown("### ⚙️ การตั้งค่า")
+    if st.button("🧹 ล้างประวัติการสนทนา", use_container_width=True):
+        st.session_state["messages"] = [{
+            "role": "model",
+            "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
+        }]
+        st.rerun()
 
-    # ทำให้ปุ่มใน Sidebar เต็มความกว้าง
-    st.markdown("""
-        <style>[data-testid="stSidebar"] div.stButton > button { width: 100%; }</style>
-    """, unsafe_allow_html=True)
+# -------------------- Init Messages --------------------
+if "messages" not in st.session_state or not st.session_state["messages"]:
+    st.session_state["messages"] = [{
+        "role": "model",
+        "content": "NongCedBot สวัสดีค่ะ 😊 ฉันตอบคำถามเกี่ยวกับหลักสูตรภาควิชาคอมพิวเตอร์ศึกษา (KMUTNB) จากไฟล์ข้อมูลที่คุณอัปโหลด ลองพิมพ์เช่น “รายวิชาปี 1 เทอม 1” หรือ “วิชา OS กี่หน่วยกิต” ได้เลยค่ะ"
+    }]
 
-    # ปุ่มล้างประวัติ
-    if st.button("🧹 ล้างประวัติการสนทนา"):
-        st.session_state["messages"] = initial_messages()
-        try:
-            st.rerun()
-        except Exception:
-            st.experimental_rerun()
-
-# -------------------- Show Chat --------------------
-st.markdown('<div class="chat-wrap">', unsafe_allow_html=True)
-
-for msg in st.session_state.get("messages", initial_messages()):
-    role = msg["role"]
-    text = msg["content"]
-
-    if role == "model":
-        st.markdown(f"<div style='background:#F4F6FF;padding:10px;border-radius:8px;margin-bottom:5px'>{text}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div style='background:#DCF8C6;padding:10px;border-radius:8px;margin-bottom:5px;text-align:right'>{text}</div>", unsafe_allow_html=True)
-
-
-
-# -------- Load Data (robust path) --------
-from pathlib import Path
-from PIL import Image
-import streamlit as st
-
-# หาพาธแบบอิงไฟล์ app.py
-BASE_DIR = Path(__file__).resolve().parent
-LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
-
-# กันไฟล์หาย + รองรับ Streamlit Cloud
-if LOGO_PATH.exists():
-    img = Image.open(LOGO_PATH)  # เปิดรูป
-
-    # พยายามใช้ use_container_width (สำหรับ Streamlit รุ่นใหม่)
-    # ถ้าเวอร์ชันไม่รองรับ จะ fallback เป็น use_column_width
-    try:
-        st.image(img, caption="Department of Computer Education | KMUTNB",
-                 use_container_width=True)
-    except TypeError:
-        st.image(img, caption="Department of Computer Education | KMUTNB",
-                 use_column_width=True)
-else:
-    st.warning(f"Logo not found: {LOGO_PATH}")
-
-
+# -------------------- Load Data --------------------
+file_path = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/NongCedBotFull.xlsx"
+try:
+    all_sheets = pd.read_excel(file_path, sheet_name=None, engine="openpyxl")
+    frames = []
+    for name, dfx in all_sheets.items():
+        dfx = dfx.copy()
+        if not dfx.empty:
+            dfx["sheet"] = name
+            frames.append(dfx)
+    df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    file_content = df.to_csv(index=False)
+except Exception as e:
+    st.error(f"อ่านไฟล์ข้อมูลไม่สำเร็จ: {e}")
+    st.stop()
 
 # -------------------- Show Chat (safe text) --------------------
 st.markdown('<div class="chat-wrap">', unsafe_allow_html=True)
