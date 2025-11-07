@@ -157,21 +157,26 @@ if "messages" not in st.session_state or not st.session_state["messages"]:
         "content": "NongCedBot สวัสดีค่ะ 😊 ฉันตอบคำถามเกี่ยวกับหลักสูตรภาควิชาคอมพิวเตอร์ศึกษา (KMUTNB) จากไฟล์ข้อมูลที่คุณอัปโหลด ลองพิมพ์เช่น “รายวิชาปี 1 เทอม 1” หรือ “วิชา OS กี่หน่วยกิต” ได้เลยค่ะ"
     }]
 
-# -------------------- Load Data --------------------
-file_path = "NongCedBot/NongCedBot/NongCedBotFull.xlsx"
+# -------- Load Data (robust path) --------
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent  # โฟลเดอร์เดียวกับ app.py
+file_path = BASE_DIR / "NongCedBotFull.xlsx"  # ไฟล์วางข้าง app.py
+
 try:
     all_sheets = pd.read_excel(file_path, sheet_name=None, engine="openpyxl")
     frames = []
     for name, dfx in all_sheets.items():
-        dfx = dfx.copy()
-        if not dfx.empty:
-            dfx["sheet"] = name
-            frames.append(dfx)
+        d = dfx.copy()
+        if not d.empty:
+            d["sheet"] = name
+            frames.append(d)
     df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
     file_content = df.to_csv(index=False)
 except Exception as e:
     st.error(f"อ่านไฟล์ข้อมูลไม่สำเร็จ: {e}")
     st.stop()
+
 
 # -------------------- Show Chat (safe text) --------------------
 st.markdown('<div class="chat-wrap">', unsafe_allow_html=True)
