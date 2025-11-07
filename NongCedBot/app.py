@@ -17,17 +17,25 @@ st.set_page_config(
 )
 
 # -------------------- LOAD LOGO --------------------
-# ใช้พาธจริงของคุณ
-LOGO_PATH = "C:/Users/p/Documents/ChatBot/ChatBotCED/workaw_chatbot/NongCedBot/NongCedBot/assets/ced-logo.jpg"
+from pathlib import Path
+import base64
 
-def _img_as_base64(path: str) -> str:
+# ใช้พาธแบบ relative จากตำแหน่งไฟล์ app.py
+BASE_DIR = Path(__file__).resolve().parent
+LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"   # ไฟล์อยู่ในโฟลเดอร์ assets
+
+def _img_as_base64(path: Path) -> str:
     try:
         with open(path, "rb") as f:
             return base64.b64encode(f.read()).decode()
-    except Exception:
+    except Exception as e:
+        # แสดงข้อความเตือนใน Streamlit ถ้าอ่านไม่เจอ
+        import streamlit as st
+        st.warning(f"⚠️ ไม่พบไฟล์โลโก้: {path} ({e})")
         return ""
 
 base64_logo = _img_as_base64(LOGO_PATH)
+
 
 # -------------------- CSS THEME --------------------
 st.markdown("""
