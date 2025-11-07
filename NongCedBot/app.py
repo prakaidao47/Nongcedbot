@@ -144,11 +144,38 @@ model = genai.GenerativeModel(
     system_instruction=PROMPT_WORKAW
 )
 
-# -------------------- Sidebar --------------------
+# =====================================================
+# 💬 NongCedBot | CED KMUTNB
+# =====================================================
+
+from pathlib import Path
 from PIL import Image
+import streamlit as st
+
+# -------------------- CONFIG --------------------
+st.set_page_config(
+    page_title="NongCedBot | CED KMUTNB",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# -------------------- PATH & LOGO --------------------
+BASE_DIR = Path(__file__).resolve().parent
+LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
+
+# -------------------- Session init --------------------
+def initial_messages():
+    return [{
+        "role": "model",
+        "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
+    }]
+
+if "messages" not in st.session_state or not isinstance(st.session_state["messages"], list):
+    st.session_state["messages"] = initial_messages()
 
 # -------------------- Sidebar --------------------
 with st.sidebar:
+    # โลโก้ (ถ้ามี)
     if LOGO_PATH.exists():
         img = Image.open(LOGO_PATH)
         try:
@@ -157,22 +184,36 @@ with st.sidebar:
         except TypeError:
             st.image(img, caption="Department of Computer Education | KMUTNB",
                      use_column_width=True)
+    else:
+        st.warning("Logo not found.")
 
     st.markdown("### ⚙️ การตั้งค่า")
 
-    # ทำให้ปุ่มใน Sidebar กว้างเต็ม (ทางเลือก)
+    # ทำให้ปุ่มใน Sidebar เต็มความกว้าง
     st.markdown("""
-        <style>
-        [data-testid="stSidebar"] div.stButton > button { width: 100%; }
-        </style>
+        <style>[data-testid="stSidebar"] div.stButton > button { width: 100%; }</style>
     """, unsafe_allow_html=True)
 
+    # ปุ่มล้างประวัติ
     if st.button("🧹 ล้างประวัติการสนทนา"):
-        st.session_state["messages"] = [{
-            "role": "model",
-            "content": "NongCedBot สวัสดีค่ะ 😊 ถามข้อมูลหลักสูตร/รายวิชา/หน่วยกิตของภาควิชาคอมพิวเตอร์ศึกษาได้เลยค่ะ"
-        }]
-        st.rerun()
+        st.session_state["messages"] = initial_messages()
+        try:
+            st.rerun()
+        except Exception:
+            st.experimental_rerun()
+
+# -------------------- Show Chat --------------------
+st.markdown('<div class="chat-wrap">', unsafe_allow_html=True)
+
+for msg in st.session_state.get("messages", initial_messages()):
+    role = msg["role"]
+    text = msg["content"]
+
+    if role == "model":
+        st.markdown(f"<div style='background:#F4F6FF;padding:10px;border-radius:8px;margin-bottom:5px'>{text}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div style='background:#DCF8C6;padding:10px;border-radius:8px;margin-bottom:5px;text-align:right'>{text}</div>", unsafe_allow_html=True)
+
 
 
 # -------- Load Data (robust path) --------
