@@ -168,15 +168,22 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 
+# หาพาธแบบอิงไฟล์ app.py
 BASE_DIR = Path(__file__).resolve().parent
 LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
 
 # กันไฟล์หาย + รองรับ Streamlit Cloud
 if LOGO_PATH.exists():
-    img = Image.open(LOGO_PATH)          # วิธีที่เสถียรสุด
-    st.image(img,
-             caption="Department of Computer Education | KMUTNB",
-             use_container_width=True)
+    img = Image.open(LOGO_PATH)  # เปิดรูป
+
+    # พยายามใช้ use_container_width (สำหรับ Streamlit รุ่นใหม่)
+    # ถ้าเวอร์ชันไม่รองรับ จะ fallback เป็น use_column_width
+    try:
+        st.image(img, caption="Department of Computer Education | KMUTNB",
+                 use_container_width=True)
+    except TypeError:
+        st.image(img, caption="Department of Computer Education | KMUTNB",
+                 use_column_width=True)
 else:
     st.warning(f"Logo not found: {LOGO_PATH}")
 
