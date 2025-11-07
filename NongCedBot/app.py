@@ -165,23 +165,17 @@ if "messages" not in st.session_state or not st.session_state["messages"]:
 
 # -------- Load Data (robust path) --------
 from pathlib import Path
+from PIL import Image
+import streamlit as st
 
-BASE_DIR = Path(__file__).resolve().parent  # โฟลเดอร์เดียวกับ app.py
-file_path = BASE_DIR / "NongCedBotFull.xlsx"  # ไฟล์วางข้าง app.py
+BASE_DIR = Path(__file__).resolve().parent
+LOGO_PATH = BASE_DIR / "assets" / "ced-logo.jpg"
 
-try:
-    all_sheets = pd.read_excel(file_path, sheet_name=None, engine="openpyxl")
-    frames = []
-    for name, dfx in all_sheets.items():
-        d = dfx.copy()
-        if not d.empty:
-            d["sheet"] = name
-            frames.append(d)
-    df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-    file_content = df.to_csv(index=False)
-except Exception as e:
-    st.error(f"อ่านไฟล์ข้อมูลไม่สำเร็จ: {e}")
-    st.stop()
+if LOGO_PATH.exists():
+    st.image(str(LOGO_PATH), caption="Department of Computer Education | KMUTNB",
+             use_container_width=True)
+else:
+    st.warning(f"Logo not found: {LOGO_PATH.name}")
 
 
 # -------------------- Show Chat (safe text) --------------------
